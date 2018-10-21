@@ -1,0 +1,98 @@
+%%% Preamble
+\documentclass[final]{article}
+\usepackage[a4paper, total={6.5in, 11in}]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[protrusion=true,expansion=true]{microtype}
+\usepackage[pdftex]{graphicx}
+\usepackage{amsmath}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{tabularx}
+\usepackage{qrcode}
+\usepackage[sfdefault]{roboto}
+
+%%% Custom headers and footers using the 'fancyhdr' package
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\fancyhead{}
+\fancyfoot[L]{}
+\fancyfoot[C]{}
+\fancyfoot[R]{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\headheight}{0pt}
+\setlength\parskip{-14pt}
+
+%%% Custom colors
+\definecolor{twitchCol}{cmyk}{0.69,0.75,0,0}
+
+%%% Custom table styling
+\setlength\extrarowheight{8pt}
+
+%%% Custom commands
+\newcommand{\nth}{\textsuperscript}
+\newcommand{\code}[1]{
+    \boxed{\texttt{#1}}
+}
+\newcommand{\inlinepython}[1]{
+    \boxed{\lstinline[language=python]!#1!}
+}
+\newcommand{\venv}{\emph{myvirtualenv}}
+\newcommand{\email}{hello@vanille.bid}
+\newcommand{\github}{https://github.com/VanilleBid/django-stream-2018}
+
+%%% Title metadata
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}}
+\newcommand{\webpageUrl}{https://django-2018.vanille.bid/}
+
+\title{
+    \begin{figure}[H]
+        \centering
+        \includegraphics[height=.9cm]{assets/Twitch_Purple_RGB.png}
+        ~~~~
+        \includegraphics[height=1cm]{assets/django-logo-positive.png}
+    \end{figure}
+	\horrule{0.5pt} \\ [0.4cm]
+    \huge \textbf{ Online Twitch Django Course \\ [0.2cm] }
+    \Large \textbf{ Sun. the 28th October, 2018, at 9 PM \\ [0.5cm] }
+    \normalsize{Cours en ligne Django sur Twitch - Dim. 28 octobre 2018 - 21h00 \\ [1cm] }
+    \Huge \textbf{Be productive when coding the web! \\ [1cm]}
+	\horrule{2pt}
+    \large {
+        \email \\
+        +33 6 56 67 66 00 \\ [0.2cm]
+        \webpageUrl \\ [0.2cm]
+        \fcolorbox{twitchCol}{white}{\parbox{
+            \dimexpr 2.2in \fboxsep-2 \fboxrule}{
+                {\textcolor{twitchCol}{\qrcode[height=2.25in]{\webpageUrl}}}
+            }
+        }
+    }
+}
+\date{}
+\author{}
+
+\begin{document}
+    \maketitle
+    
+    \Large
+    
+    \section*{\Huge{Learn How To Django}}
+        \begin{itemize}
+            \item Setup a Django project with Python
+            \item Write a whole blog in a few minutes
+            \item With the MTV Design Pattern
+            \item Model your database with a SQLAlchemy like ORM
+            \item Template your website with Jinja like
+            \item Protect your forms against cross-site scripting attacks
+        \end{itemize}
+        
+        \vspace*{\fill}
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[height=1cm]{assets/python-powered-w-200x80.png}
+    \end{figure}
+\end{document}
