@@ -1,0 +1,22 @@
+\subsection{The Views}
+    Let's put some logic to retrieve article and show our posts on the homepage.
+        
+    \begin{lstlisting}[language=python, title=blog/views.py]
+from django.shortcuts import render
+from .models import Post
+
+
+def post_list(request):
+    context = {'posts': Post.objects.all()}
+    return render(request, 'blog/post_list.html', context)
+%
+    \end{lstlisting}
+
+    \begin{itemize}
+        \item First, we create a \code{post\textunderscore list} view that we will later route to a URL;
+        \item Then, we create a context (a dictionary) for the template to be rendered;
+        \item We store as \code{'post'} all the existing posts in the database by using the
+            \inlinepython{Post.objects.all()} instruction, provided by Django ORM;
+        \item Then, we tell Django to render our (non-existing) template 
+            \code{blog/post\textunderscore list.html} and we pass our context containing the blog posts.
+    \end{itemize}

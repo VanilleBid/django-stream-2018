@@ -1,0 +1,47 @@
+\subsection{The URL configuration}
+    Now that we have our view, we can route it. 
+    For that, create a URLConf file for our \code{blog} package (\code{blog/urls.py}), containing:
+    
+    \begin{lstlisting}[language=python, title=blog/urls.py]
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.post_list, name='post-list')
+]
+%
+    \end{lstlisting}
+
+    \begin{itemize}
+        \item We create a list of URL patterns;
+        \item We route as root point our \code{views.post\textunderscore list} view 
+            and we tell Django that we want to internally call it \code{post-list}.
+            The name will only be visible for the developer, and not for the user,
+            it will allow us later to tell Django that we are speaking about that URL and not another one.
+    \end{itemize}
+
+    \subsection{Telling Django about our package URLs}
+        What we have done is not enough, if you test, Django doesn't detect our new URL.
+        And that is because we need to tell our site (or our core) to include the URLs of our \code{blog} package.
+        
+        For that, we edit \code{mysite/urls.py} to:
+        
+        \begin{lstlisting}[language=python, title=mysite/urls.py]
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    
+    # include the URLs of the 'blog' package
+    path('', include('blog.urls'))
+]
+%
+        \end{lstlisting}
+
+        If you look closely, you will notice a new instruction:
+        \inlinepython{path('', include('blog.urls'))}. 
+        This instructs Django to route all of our blog URLs to the root point
+        (this will be \code{http://127.0.0.1:8000/}).
+        
+        That's as simple as that.

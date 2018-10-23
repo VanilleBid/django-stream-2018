@@ -1,0 +1,30 @@
+\subsection{The Templates}
+    Now, if you open your web browser back to \url{http://127.0.0.1:8000/} you should see and notice this error:
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=7cm]{.assets/template-does-not-exist.png}
+        \caption{Django failed loading a template.}
+    \end{figure}
+    
+    That is because we have yet to create the \code{blog/post\textunderscore list} template that we used in our view.
+    
+    \subsubsection{The First Template of Our Project}
+        We create a \code{templates} directory into the \code{blog} package, 
+        then for better code understanding, a \code{blog} directory inside it (\code{templates/blog}).
+        
+        Now, we create the template file:
+        
+        \begin{lstlisting}[language=html, title=blog/templates/blog/post\textunderscore list.html, escapechar=\~]
+{% for post in posts %}
+  <div>
+    <p>Date: {{ post.created_date }}</p>
+    <h2>
+      <a href="#">{{ post }}</a>
+    </h2>
+    <p>{{ post.text | linebreaksbr }}</p>
+  </div>
+{% endfor %}
+~
+        \end{lstlisting}
+    
+    \subsubsection{Template Inheritance}

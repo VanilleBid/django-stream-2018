@@ -1,0 +1,47 @@
+ \subsection{The Models}
+    Let's create a blog post model for our database and us to use later in our application
+    to create, manage and view our blog and its posts.
+    
+    \begin{lstlisting}[language=python, title=\texttt{blog/models.py}]
+from django.db import models
+from django.utils import timezone
+
+
+class Post(models.Model):  # This line defines our Django ORM model.
+    author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    text = models.TextField()
+    created_date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title
+%
+    \end{lstlisting}
+
+    Let's get line by line what that block of code does. First, we have:
+    
+    \begin{itemize}
+        \item \inlinepython{class Post(models.Model):} this line defines our Django ORM model, 
+              where \code{models.Model} is the base Django ORM model and \code{Post},
+              the name of our model.
+        \item Then, we defined some properties: \texttt{author}, 
+            \texttt{title}, \texttt{text} and \texttt{created\textunderscore date},
+            with a given type (like a relation, a text, a number, and a date).
+              
+            We have:
+              
+            \begin{itemize}
+                \item \code{models.ForeignKey}
+                    this defines a relation (or a link) to another model.
+                \item \code{models.CharField}
+                    this defines a short text field, it has a limited length.
+                \item \code{models.TextField} 
+                    this defines a long text field (ideal for a blog article's content).
+                \item \code{models.DateTimeField}
+                    this defines a date and time object.
+            \end{itemize}
+            
+        \item And finally, 
+        we have \inlinepython{def __str__(self):} that allows us to get the blog title
+        when we want to show the blog post entry, that will be the \code{Post} object.
+    \end{itemize}

@@ -1,0 +1,22 @@
+\subsubsection{Creating the migrations and tables}
+    Now that we have the models, we need to create the django migrations 
+    and then SQL tables through the migrations.
+    
+    To generate the models migrations, run \code{python manage.py makemigrations blog}.
+    This should output the following:
+            
+    \begin{lstlisting}[numbers=none]
+Migrations for 'blog':
+  blog/migrations/0001_initial.py:
+  - Create model Post
+    \end{lstlisting}
+        
+    Then, we can run \\ \code{python manage.py migrate blog} to create the database tables,
+    and we should get the following output:
+            
+    \begin{lstlisting}[numbers=none]
+Operations to perform:
+  Apply all migrations: blog
+Running migrations:
+  Applying blog.0001_initial... OK
+    \end{lstlisting}

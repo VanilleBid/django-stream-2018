@@ -1,0 +1,51 @@
+\section{Initialization of the project}
+    \emph{Note: change the current directory to the target parent project directory.}
+        
+    \subsection{Starting a new Django project}
+        Create a new Django project by running the \texttt{django-admin} bootstrap, as follows: \\
+        \code{django-admin startproject \emph{mysite}} \\
+        
+        This will create the following file structure:
+        
+        \begin{lstlisting}
+|-- manage.py
+|-- mysite
+    |-- settings.py
+    |-- urls.py
+    |-- wsgi.py
+    |-- __init__.py
+
+1 directory
+5 regular files
+        \end{lstlisting}
+        
+        \begin{tabularx}{\linewidth}{l|X}
+             \texttt{manage.py} &
+                \href{https://docs.djangoproject.com/en/2.1/howto/custom-management-commands/}
+                {This file allows you to run commands on the project, 
+                like controlling the database or running the development HTTP server.} \\
+             \texttt{mysite/settings.py} &
+                \href{https://docs.djangoproject.com/en/2.1/topics/settings/}
+                {The Django application settings file containing all your project configuration.} \\
+             \texttt{mysite/urls.py} &
+                \href{https://docs.djangoproject.com/en/2.1/topics/http/urls/}
+                {A url mapping file to tell Django how to dispatch URLs. This file is also called the \emph{URLconf file}} \\
+             \texttt{mysite/wsgi.py} &
+                The project WSGI application file, used to serve the django application 
+                with a production web server (nginx, Apache, etc.) \\
+             \texttt{mysite/\textunderscore\textunderscore init\textunderscore\textunderscore.py} &
+                The standard Python package file.
+        \end{tabularx}
+    
+    \subsection{Optional: adding the dependencies to a file}
+        \noindent Using any editor, create a \code{requirements.txt} file 
+        containing the following content:
+
+        \begin{lstlisting}[title=\texttt{requirements.txt}]
+django~=2.1
+%
+        \end{lstlisting}
+        
+        This file allows you to directly install the requirements by running: \\
+        \code{pip install -r requirements.txt}.
+ 

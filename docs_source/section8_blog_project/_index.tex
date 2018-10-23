@@ -1,0 +1,36 @@
+\section{A demo project: a simple blog}
+    To show how Django works, the best way is to look and learn from an example project code.
+    So, here it is: let's build a simple blog. This blog will allow you to create and edit blog posts,
+    and to post comments.
+    
+    Run \code{python manage.py startapp blog}, to create our base blog application.
+    Then, in your site settings (\code{mysite/settings.py}), add the \code{blog}
+    application to the installed apps, 
+    by finding the \code{INSTALLED\textunderscore APPS} variable 
+    and appending \code{blog} to it. Like so:
+    
+    \begin{lstlisting}[language=python, numbers=none, title=\texttt{mysite/settings.py}]
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'blog'  # our blog application added here
+]
+    \end{lstlisting}
+    
+    \input{section8_blog_project/section1_the_models.tex}
+    \input{section8_blog_project/section2_migrations.tex}
+    \input{section8_blog_project/section3_admin_panel.tex}
+    \input{section8_blog_project/section4_the_views.tex}
+    \input{section8_blog_project/section5_the_urls.tex}
+    \input{section8_blog_project/section6_the_templates.tex}
+    \input{section8_blog_project/section7_adding_css.tex}
+    \input{section8_blog_project/section8_single_post_comments.tex}
+
+    \subsection{The Forms}
+        \label{sec:the-forms}
+        \subsubsection{CSRF}
+        + custom Field for calculating am I a bot?

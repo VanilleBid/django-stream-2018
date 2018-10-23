@@ -1,0 +1,24 @@
+\section{Installation of the other course requirements}
+    \subsection{Creating a Python Virtual Environment}
+        After making sure you are all set to start,
+        create a Python virtual environment by running \code{python3 -m venv \venv}. \\
+        
+        Then, \textbf{you need to activate this environment} in your current terminal session,
+        so the terminal is using your Python environment instead of the system python installation.
+    
+        \begin{tabular}{r l}
+             \textbf{Unix systems (Mac OS included),} & \code{source \venv/bin/activate} \\
+             \textbf{Windows,} & \code{\venv\textbackslash Scripts\textbackslash activate}
+        \end{tabular}
+        
+    \subsection{Installation of Git}
+        \begin{description}
+            \item[Windows and Mac OS,] 
+                install \href{https://git-scm.com/downloads}{git-scm.com}'s software.
+            \item[Ubuntu,] run the command \code{apt install git}.
+        \end{description}
+        
+    \subsection{Installation of Django}
+        In your activated Python environment, install \emph{Django 2.1} 
+        using \emph{pip} by running the following command:
+        \code{pip install django$\mathtt{\sim}$=2.1}.

@@ -1,0 +1,49 @@
+\subsection{The Admin Site}
+    Now, we can use one of the features of the Django framework to quickly give us a way
+    to manage our newly created model (retrieve, create, update, delete).
+    
+    For this, add the following content to the file \code{blog/admin.py}:
+    
+    \begin{lstlisting}[language=python]
+from django.contrib import admin
+from .models import Post
+
+admin.site.register(Post)
+%
+    \end{lstlisting}
+    
+    This will register our \code{Post} model to the admin page. You can now open your
+    web browser to \url{http://127.0.0.1:8000/admin/}, and you should see the following page:
+    
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=6cm]{.assets/django-admin-login-page.png}
+        \caption{The django-admin login page.}
+    \end{figure}
+    
+    \subsubsection{Creating the admin credentials}
+        To login, we need to create a new admin user (a super-user). To do that, 
+        we need to run the following command: \code{python manage.py createsuperuser}
+        and fill everything. You will get something like this:
+        
+        \begin{lstlisting}[numbers=none]
+Username (leave blank to use 'myusername'): admin
+Email address: admin@example.com
+Password:
+Password (again):
+The password is too similar to the email address.
+This password is too short. It must contain at least 8 characters.
+This password is too common.
+Bypass password validation and create user anyway? [y/N]: y
+Superuser created successfully.
+        \end{lstlisting}
+        
+        Then we should be able to login if you return on the admin page. And then we should see this:
+        
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=12cm]{.assets/django-admin-index.png}
+            \caption{Our django-admin index page, with the blog post model.}
+        \end{figure}
+        
+        You can now play around with the posts, like adding a few posts, editing them, deleting them, etc.

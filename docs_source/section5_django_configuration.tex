@@ -1,0 +1,70 @@
+\section{Configuration of the Django project}
+    \subsection{The basics}
+        There are many available settings, and infinite ways to configure a base Django project.
+        Some of them are:
+        
+        \begin{tabularx}{\linewidth}{l|X}
+             \code{DEBUG} &
+                A boolean that turns on/off the debug mode.
+                Never deploy a site into production with \code{DEBUG} turned on. \\
+             \code{ALLOWED\textunderscore HOSTS} &
+                A list of strings representing the host/domain names
+                that this Django site can serve.\newline
+                Example: \code{ALLOWED\textunderscore HOSTS = ['localhost', '127.0.0.1']} \\
+             \code{LANGUAGE\textunderscore CODE} &
+                A string representing the language code for this installation, default is
+                \code{'en-us'} for U.S. English.
+        \end{tabularx}
+        
+        You can find out more at this URL: \url{https://docs.djangoproject.com/en/2.1/ref/settings/}.
+        
+        {\centering 
+        
+            \qrcode{https://docs.djangoproject.com/en/2.1/ref/settings/}
+            
+        }
+        
+    \subsection{Setting up the database(s)}
+        You can setup databases using the \code{DATABASES} settings, a dictionary containing
+        the settings for all databases to be used with Django.
+        It is a nested dictionary whose contents map a database alias
+        to a dictionary containing the options for an individual database.
+        
+        You must configure a \code{default} database among any (optional) additional databases.
+        You can easily configure Django to use SQLite, MySQL, Postgres, etc.
+        
+        More information at this URL: \url{https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-DATABASES}.
+        
+        ~
+        
+        {\centering
+        
+            \qrcode{https://docs.djangoproject.com/en/2.1/ref/settings/#std:setting-DATABASES}
+        
+        }
+        
+        ~
+        
+        Example SQLite configuration:
+        \begin{lstlisting}[language=python]
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase'
+    }
+}
+        \end{lstlisting}
+        
+        Example Postgres configuration:
+        \begin{lstlisting}[language=python]
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydatabase',
+        'USER': 'mydatabaseuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '127.0.0.1',
+        'PORT': '5432'
+    }
+}
+        \end{lstlisting}
