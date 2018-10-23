@@ -1,9 +1,170 @@
 \subsection{Viewing comments over a single blog post}
     For the \emph{section~\ref{sec:the-forms}} demo example, 
-    we woud like to prepare a little 'comments' feature into our blog.
+    we would like to prepare a little comments section feature into our blog.
     We are gonna add a new \code{Comment} model and clicking on the posts title
     will now redirect the user to the single view by updating the template, URLs and views.
 
     \subsubsection{Adding the new models}
-    \subsubsection{Updating the URLs and views}
+        Let's create a \code{Comment} model with a \texttt{name}, 
+        a \texttt{content} and a \texttt{created\textunderscore date} field. 
+        We will append it to \code{models.py}.
+        
+        \begin{lstlisting}[language=python, title=blog/models.py]
+class Comment(models.Model):
+    post = models.ForeignKey(
+        to=Post, related_name='comments', null=False, blank=False,
+        on_delete=models.CASCADE)
+    author_name = models.CharField(max_length=40)
+    content = models.CharField(max_length=500)
+
+    class Meta:
+        ordering = ('-pk',)
+%
+        \end{lstlisting}
+        
+        Little notes on how the \code{ForeignKey} field works:
+        \begin{description}
+            \item[on\textunderscore delete,] this is the behaviour to adopt when the referenced 
+                object is deleted.
+                \begin{itemize}
+                    \item \code{models.CASCACE} means that when the referenced object is deleted, 
+                        it must also delete the objects that have references to it.
+                    \item \code{models.PROTECTED} it forbids the deletion of the referenced 
+                        object until the references are not removed.
+                    \item \code{models.SET\textunderscore NULL} means to set the referenced 
+                        objects to \code{NULL}.
+                \end{itemize}
+        \end{description}
+    
+        Now, generate the new migrations file by running like before:\\
+        \code{python manage.py makemigrations blog} which should output:
+        
+        \begin{lstlisting}[numbers=none]
+Migrations for 'blog':
+  blog\migrations\0002_auto_20181023_2205.py
+    - Create model Comment
+    - Add field comments to post
+        \end{lstlisting}
+        
+        Then, apply the migrations by running\\
+        \code{python manage.py migrate blog}. Which, should output:
+        
+        \begin{lstlisting}[numbers=none]
+Operations to perform:
+  Apply all migrations: blog
+Running migrations:
+  Applying blog.0002_auto_20181023_2205... OK
+        \end{lstlisting}
+    
+    \subsubsection{Updating the views}
+        First, we want to add a view that will allow us to view a single 
+        post entry. For that, we will update the \code{views.py} file with this content:
+        
+        \begin{lstlisting}[language=python, title=blog/views.py]
+from django.http import Http404
+from django.shortcuts import render
+from .models import Post
+
+
+def post_list(request):
+    context = {'posts': Post.objects.all()}
+    return render(request, 'blog/post_list.html', context)
+
+
+def post_single(request, post_id: int):
+    try:
+        # Prefetch the comments and retrieve the given post
+        post = Post.objects.prefetch_related('comments').get(pk=post_id)
+    except Post.DoesNotExist:
+        raise Http404(f'Post #{post_id} not found.')
+
+    return render(request, 'blog/post_single.html', {'post': post})
+%
+        \end{lstlisting}
+        
+        First of all (at line 1), we imported \code{Http404} from \code{django.http}
+        to allow us to throw HTTP 404 errors on demand.
+        
+        Then, at line 11, we define a new view called \code{post\textunderscore single} 
+        taking a \code{post\textunderscore id} parameter of the type \code{int},
+        it will allow us to pass the \code{post\textunderscore id} parameter from the URL.
+        
+        After that we tell the query set of the Django's ORM that it will have to
+        prefetch the \code{Post} comments. This will allow Django to know in advance 
+        that we will need the comments and allow us to make the SQL request in one go,
+        instead of doing one at the beginning (here) and again later in the templates 
+        code when we will want the comments. So, for example, locally, 
+        it saves 1ms for the response time.
+        
+        Then, we say that we want to retrieve the post having as primary key the given
+        post identifier.
+        
+        But, if the post does not exist (e.g. the user wanted the post number 99),
+        it will raise the \code{Post.DoesNotExist} exception that we handle to raise
+        a HTTP 404 error instead.
+        
+        Then, at line 18, we render the single post template with the post.
+        
+    \subsubsection{Updating the URLs}
+        Now, we update \code{urls.py} to route a single post to our newly created
+        \code{post\textunderscore single} view.
+        
+        \begin{lstlisting}[language=python, title=blog/urls.py]
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.post_list, name='post-list'),
+    path('post/<int:post_id>/', views.post_single, name='post-single')
+]
+%
+        \end{lstlisting}
+        
+        You may notice at line 6, that you have \code{post/<int:post\textunderscore id>/}, 
+        this tells Django that we are expecting an integer parameter in the URL
+        and that we want it to be passed to the view as \code{post\textunderscore id}.
+        
     \subsubsection{Updating the templates}
+        Now we can route our posts to their single post view, to do that, 
+        we update the link in \code{post\textunderscore list.html} to this:
+        
+        \begin{lstlisting}[language=html, numbers=none, escapechar=~]
+<a href="{% url 'post-single' post_id=post.pk %}">{{ post }}</a>
+        \end{lstlisting}
+        
+        This will tell Django to generate a URL to a single post with the 
+        identifier of the currently proceeded post.
+
+        Then, we want to create the template \code{post\textunderscore single.html} 
+        to show a single post and show the comments. We will put that:
+        
+        \begin{lstlisting}[language=html, escapechar=~, title=blog/templates/post\textunderscore single.html]
+{% extends 'blog/base.html' %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{ post.title }}</h5>
+      <p class="card-text">{{ post.content | linebreaksbr }}</p>
+    </div>
+  </div>
+
+  {% with comments=post.comments.all %}
+    {% if comments %}
+      <div class="card mt-4" id="comments">
+        <div class="card-body">
+          <h5 class="card-title">Comments</h5>
+          <ul class="list-group list-group-flush">
+            {% for comment in comments %}
+              <li class="list-group-item">
+                {{ comment.name }} {{ comment.content }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+  {% endwith %}
+{% endblock %}
+~
+        \end{lstlisting}

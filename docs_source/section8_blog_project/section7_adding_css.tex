@@ -53,11 +53,16 @@ href="//stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
   <head>
 <link
 rel="stylesheet"
-href="//stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
 />
   </head>
   <body>
     <div class="container">
+      <div class="navbar">
+        <span class="navbar-brand">
+          <a href="{% url 'post-list' %}">Blog Demo</a>
+        </span>
+      </div>
       {% block content %}{% endblock %}
     </div>
   </body>
