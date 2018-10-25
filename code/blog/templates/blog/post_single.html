@@ -1,0 +1,34 @@
+{% extends 'blog/base.html' %}
+
+{% block content %}
+  <div class="card">
+    <div class="card-body">
+      <h5 class="card-title">{{ post.title }}</h5>
+      <p class="card-text">{{ post.content | linebreaksbr }}</p>
+    </div>
+  </div>
+
+  {% with comments=post.comments.all %}
+    <p>{{ comments|stringformat:'r' }}</p>
+    {% if comments %}
+      <div class="card mt-4" id="comments">
+        <div class="card-body">
+          <h5 class="card-title">Comments</h5>
+          <ul class="list-group list-group-flush">
+            {% for comment in comments %}
+              <li class="list-group-item">
+                {{ comment.name }} {{ comment.content }}
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <form method="post">
+    {% csrf_token %} <!-- instruction to generate a CSRF token -->
+    {{ comment_form.as_p  }}
+    <button class="btn btn-primary" type="submit">Submit</button>
+  </form>
+{% endblock %}
