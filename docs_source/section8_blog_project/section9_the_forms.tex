@@ -1,0 +1,147 @@
+\subsection{The Forms}
+    \label{sec:the-forms}
+    Now that we have a page for viewing a single post, 
+    and comments models and templates up and running,
+    we can create a form allowing the user to add comments to our posts.
+    
+    \subsection{The ModelForm}
+        In a new file named \code{forms.py}, we are going to extend a base
+        form class that we will use as our form builder. This base form builder
+        class is called \code{ModelForm} because it takes a \code{model}
+        \emph{
+            meta attribute\footnote{
+                \raggedright
+                To learn about meta classes, you can take a look at
+                https://jfine-python-classes.readthedocs.io/en/latest/metaclass-attribute.html
+                \begin{center}\qrcode[height=2.5cm]{
+                    https://web.archive.org/web/20180327162929/
+                    https://jfine-python-classes.readthedocs.io/en/latest/metaclass-attribute.html}
+                \end{center}
+            }}
+        telling the form builder around what type of data model to build.
+        
+        \begin{lstlisting}[language=python, title=blog/forms.py]
+from django import forms
+from .models import Comment
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('author_name', 'content')
+%
+        \end{lstlisting}
+        
+        \begin{description}
+            \item[At line 7,] we are telling that we want to use the \code{Comment} 
+                model for the form.
+            \item[At line 8,] we then tell we only want to use and only handle the
+                \code{author\textunderscore name} and \code{content} field of \code{Comment},
+                thus, we exclude any field that we don't want the user to be able to manipulate or inject.
+        \end{description}
+        
+        That's it.
+        
+    \subsubsection{Integrating the form to the views}
+        We need to update the code base of the \code{post\textunderscore single} view,
+        to integrate the \code{CommentForm} form. Here is how we are going to proceed:
+        \begin{description}
+            \item[First, we construct,] we need to initialize \code{CommentForm} with:
+                \begin{itemize}
+                    \item The HTTP POST data or nothing (\code{None}) is there is no data;
+                    \item A target \code{Comment} instance where the form will commit the changes.
+                \end{itemize}
+            \item[Then, we check,] we check if the form was submitted and is valid, using the 
+                \code{is\textunderscore valid} method.
+                \begin{description}
+                    \item[We commit,] and redirect the user if the form \textbf{is valid};
+                    \item[We render the form,] if the form is \textbf{not valid}.
+                \end{description}
+        \end{description}
+        
+        \begin{lstlisting}[language=python, title=blog/views.py, numbers=none]
+def post_single(request, post_id: int):
+    try:
+        # Prefetch the comments and retrieve the given post
+        post = Post.objects.prefetch_related('comments').get(pk=post_id)
+    except Post.DoesNotExist:
+        raise Http404(f'Post #{post_id} not found.')
+
+    # create a base empty comment to put user input into;
+    # this base comment will have has parent post the current viewing post.
+    comment_instance = Comment(post=post)
+    
+    # we create the form from the HTTP POST data or pass None if no POST data;
+    # and we pass our empty comment instance to be populated.
+    comment_form = CommentForm(request.POST or None, instance=comment_instance)
+
+    # check if the form is valid
+    if comment_form.is_valid():
+        # commit the changes if the form is valid
+        comment_form.save(True)
+        
+        # and redirect the user back to the single post view
+        return redirect('post-single', post_id=post_id)
+
+    # pass the form to render
+    context = {'post': post, 'comment_form': comment_form}
+    return render(request, 'blog/post_single.html', context)
+%
+        \end{lstlisting}
+        
+    \subsubsection{Updating the templates}
+        Now, we just have to render the form as a HTML form in the single post template.
+        For that, we just have to write \code{\{\{ form \}\}} in the template, 
+        it will render its \code{<label>} and \code{<input>} automatically (inline form).
+        Or call \code{form.as\textunderscore p} to render the form wrapped around \code{<p>} 
+        tags (vertical form).
+        
+        \emph{
+            Note: there is also \code{form.as\textunderscore table} to wrap around \code{<tr>} tags
+            and \code{form.as\textunderscore ul} to wrap around \code{<li>} tags.}
+            
+        Here is the final code (to add after the \code{\%\{ endwith \%\}} instruction):
+        \begin{lstlisting}[language=html, numbers=none, title=blog/templates/post\textunderscore single.html]
+<form method="post">
+  {{ comment_form.as_p  }}
+  <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+        \end{lstlisting}
+        
+        \emph{Note: the code doesn't work as is, see the next section.}
+        \newpage
+    
+    \subsubsection{The CSRF protection}
+        You may notice that if you run the above code as is, you run into this error:
+        \begin{figure}[H]
+            \centering
+            \boxed{
+                \includegraphics[width=\textwidth]{.assets/django-csrf-error.png}
+            }
+            \caption{CSRF verification failure error with \texttt{DEBUG=True}.}
+        \end{figure}
+        
+        The reason behind this error, is that by default, Django is enabling the CSRF protection
+        which is here to defend your website against the Cross-site Scripting (XSS) vulnerability.
+        To be short: CSRF is an attack where a malicious entity manage to tricks
+        a victim into performing actions on behalf of the attacker (e.g.: clicking on a link)\footnote{
+            More information at: https://www.acunetix.com/websitesecurity/csrf-attacks/}.
+        
+        And one of the most popular protection against this type of attack, is to require the user to 
+        give back a randomly generated token that was given to the browser when getting the form.
+        
+        And, in our above form, we did not give the user such CSRF token. To fix that, we need
+        to call the tag \code{csrf\textunderscore token} in our \code{<form>}'s body. 
+        This will generate a hidden \code{<input>} field containing a CSRF token, 
+        in addition to a cookie.
+        
+        So, we have to edit our code to this:
+        \begin{lstlisting}[
+            language=html, escapechar=\~, numbers=none, 
+            title=blog/templates/post\textunderscore single.html]
+<form method="post">
+  {% csrf_token %} <!-- instruction to generate a CSRF token -->
+  {{ comment_form.as_p  }}
+  <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+        \end{lstlisting}
